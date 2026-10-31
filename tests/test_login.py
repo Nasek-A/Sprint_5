@@ -19,104 +19,102 @@ from config import (
 )
 
 
-def test_login_from_main_page(driver):
-    driver.get(BASE_URL)
+class TestLogin:
 
-    driver.find_element(*LOGIN_TO_ACCOUNT_BUTTON).click()
+    def test_login_from_main_page(self, driver):
+        driver.get(BASE_URL)
 
-    WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(LOGIN_EMAIL_INPUT)
-    )
+        driver.find_element(*LOGIN_TO_ACCOUNT_BUTTON).click()
 
-    driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(EMAIL)
-    driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(PASSWORD)
-    driver.find_element(*LOGIN_SUBMIT_BUTTON).click()
+        WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(LOGIN_EMAIL_INPUT)
+        )
 
-    # Ждём перехода на главную страницу конструктора
-    WebDriverWait(driver, 10).until(
-        EC.url_to_be(BASE_URL)
-    )
+        driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(EMAIL)
+        driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(PASSWORD)
+        driver.find_element(*LOGIN_SUBMIT_BUTTON).click()
 
-    assert driver.current_url == (BASE_URL)
+        # Ждём перехода на главную страницу конструктора
+        WebDriverWait(driver, 10).until(
+            EC.url_to_be(BASE_URL)
+        )
 
+        assert driver.current_url == BASE_URL
 
-def test_login_from_personal_account(driver):
-    driver.get(BASE_URL)
+    def test_login_from_personal_account(self, driver):
+        driver.get(BASE_URL)
 
-    # Переходим в личный кабинет
-    driver.find_element(*PERSONAL_ACCOUNT_LINK).click()
+        # Переходим в личный кабинет
+        driver.find_element(*PERSONAL_ACCOUNT_LINK).click()
 
-    # Ждём появления поля Email на странице входа
-    WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(LOGIN_EMAIL_INPUT)
-    )
+        # Ждём появления поля Email на странице входа
+        WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(LOGIN_EMAIL_INPUT)
+        )
 
-    # Вводим данные зарегистрированного пользователя
-    driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(EMAIL)
-    driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(PASSWORD)
-    driver.find_element(*LOGIN_SUBMIT_BUTTON).click()
+        # Вводим данные зарегистрированного пользователя
+        driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(EMAIL)
+        driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(PASSWORD)
+        driver.find_element(*LOGIN_SUBMIT_BUTTON).click()
 
-    # Проверяем переход на главную страницу
-    WebDriverWait(driver, 10).until(
-        EC.url_to_be(BASE_URL)
-    )
+        # Проверяем переход на главную страницу
+        WebDriverWait(driver, 10).until(
+            EC.url_to_be(BASE_URL)
+        )
 
-    assert driver.current_url == (BASE_URL)
+        assert driver.current_url == BASE_URL
 
+    def test_login_from_registration_page(self, driver):
+        driver.get(BASE_URL + "register")
 
-def test_login_from_registration_page(driver):
-    driver.get(BASE_URL + "register")
+        # Переходим к форме входа
+        driver.find_element(*REGISTER_LOGIN_LINK).click()
 
-    # Переходим к форме входа
-    driver.find_element(*REGISTER_LOGIN_LINK).click()
+        WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(LOGIN_EMAIL_INPUT)
+        )
 
-    WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(LOGIN_EMAIL_INPUT)
-    )
+        # Вводим данные пользователя
+        driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(EMAIL)
+        driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(PASSWORD)
+        driver.find_element(*LOGIN_SUBMIT_BUTTON).click()
 
-    # Вводим данные пользователя
-    driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(EMAIL)
-    driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(PASSWORD)
-    driver.find_element(*LOGIN_SUBMIT_BUTTON).click()
+        # Проверяем успешный вход
+        WebDriverWait(driver, 10).until(
+            EC.url_to_be(BASE_URL)
+        )
 
-    # Проверяем успешный вход
-    WebDriverWait(driver, 10).until(
-        EC.url_to_be(BASE_URL)
-    )
+        assert driver.current_url == BASE_URL
 
-    assert driver.current_url == BASE_URL
+    def test_open_password_recovery_page(self, driver):
+        driver.get(BASE_URL + "login")
 
+        driver.find_element(*FORGOT_PASSWORD_LINK).click()
 
-def test_open_password_recovery_page(driver):
-    driver.get(BASE_URL + "login")
+        WebDriverWait(driver, 5).until(
+            EC.url_contains("/forgot-password")
+        )
 
-    driver.find_element(*FORGOT_PASSWORD_LINK).click()
+        assert "/forgot-password" in driver.current_url
 
-    WebDriverWait(driver, 5).until(
-        EC.url_contains("/forgot-password")
-    )
+    def test_login_from_password_recovery_page(self, driver):
+        driver.get(BASE_URL + "forgot-password")
 
-    assert "/forgot-password" in driver.current_url
+        # Переходим к форме входа
+        driver.find_element(*RECOVERY_LOGIN_LINK).click()
 
+        WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(LOGIN_EMAIL_INPUT)
+        )
 
-def test_login_from_password_recovery_page(driver):
-    driver.get(BASE_URL + "forgot-password")
+        # Вводим данные пользователя
+        driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(EMAIL)
+        driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(PASSWORD)
+        driver.find_element(*LOGIN_SUBMIT_BUTTON).click()
 
-    # Переходим к форме входа
-    driver.find_element(*RECOVERY_LOGIN_LINK).click()
+        # Проверяем успешный вход
+        WebDriverWait(driver, 10).until(
+            EC.url_to_be(BASE_URL)
+        )
 
-    WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(LOGIN_EMAIL_INPUT)
-    )
-
-    # Вводим данные пользователя
-    driver.find_element(*LOGIN_EMAIL_INPUT).send_keys(EMAIL)
-    driver.find_element(*LOGIN_PASSWORD_INPUT).send_keys(PASSWORD)
-    driver.find_element(*LOGIN_SUBMIT_BUTTON).click()
-
-    # Проверяем успешный вход
-    WebDriverWait(driver, 10).until(
-        EC.url_to_be(BASE_URL)
-    )
-
-    assert driver.current_url == BASE_URL
+        assert driver.current_url == BASE_URL

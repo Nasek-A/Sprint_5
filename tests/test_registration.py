@@ -15,36 +15,37 @@ from config import BASE_URL
 from helpers import generate_email, generate_password
 
 
-def test_successful_registration(driver):
-    driver.get(BASE_URL + "register")
+class TestRegistration:
 
-    driver.find_element(*REGISTER_NAME_INPUT).send_keys("Иван")
-    driver.find_element(*REGISTER_EMAIL_INPUT).send_keys(generate_email())
-    driver.find_element(*REGISTER_PASSWORD_INPUT).send_keys(
-        generate_password()
-    )
+    def test_successful_registration(self, driver):
+        driver.get(BASE_URL + "register")
 
-    driver.find_element(*REGISTER_BUTTON).click()
+        driver.find_element(*REGISTER_NAME_INPUT).send_keys("Иван")
+        driver.find_element(*REGISTER_EMAIL_INPUT).send_keys(generate_email())
+        driver.find_element(*REGISTER_PASSWORD_INPUT).send_keys(
+            generate_password()
+        )
 
-    # Ждём перехода на страницу входа
-    WebDriverWait(driver, 10).until(
-        EC.url_contains("/login")
-    )
+        driver.find_element(*REGISTER_BUTTON).click()
 
-    assert "/login" in driver.current_url
+        # Ждём перехода на страницу входа
+        WebDriverWait(driver, 10).until(
+            EC.url_contains("/login")
+        )
 
+        assert "/login" in driver.current_url
 
-def test_registration_with_short_password_shows_error(driver):
-    driver.get(BASE_URL + "register")
+    def test_registration_with_short_password_shows_error(self, driver):
+        driver.get(BASE_URL + "register")
 
-    driver.find_element(*REGISTER_NAME_INPUT).send_keys("Тест")
-    driver.find_element(*REGISTER_EMAIL_INPUT).send_keys(generate_email())
-    driver.find_element(*REGISTER_PASSWORD_INPUT).send_keys("12345")
+        driver.find_element(*REGISTER_NAME_INPUT).send_keys("Тест")
+        driver.find_element(*REGISTER_EMAIL_INPUT).send_keys(generate_email())
+        driver.find_element(*REGISTER_PASSWORD_INPUT).send_keys("12345")
 
-    driver.find_element(*REGISTER_BUTTON).click()
+        driver.find_element(*REGISTER_BUTTON).click()
 
-    error_message = WebDriverWait(driver, 5).until(
-        EC.visibility_of_element_located(INCORRECT_PASSWORD_ERROR)
-    )
+        error_message = WebDriverWait(driver, 5).until(
+            EC.visibility_of_element_located(INCORRECT_PASSWORD_ERROR)
+        )
 
-    assert error_message.is_displayed()
+        assert error_message.is_displayed()
