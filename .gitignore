@@ -1,0 +1,10 @@
+# Временные файлы Python
+__pycache__/
+*.py[cod]
+
+# Кэш pytest
+.pytest_cache/
+
+# Виртуальное окружение Python
+.venv/
+venv/
